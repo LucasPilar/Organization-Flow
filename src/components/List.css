@@ -1,0 +1,99 @@
+.container {
+    width: 100%;
+    min-height: 100vh;
+    /*Define a altura mínima de um elemento. vh significa "viewport height" (altura da viewport).*/
+    background-color: rgb(33, 35, 40);
+    padding: 10px;
+  }
+  
+  .lista-tarefas {
+    width: 100%;
+    max-width: 540px;
+    ;
+    background: rgb(50, 53, 60);
+    margin: 100px auto 20px;
+    padding: 40px 30px 70px;
+    border-radius: 10px;
+  }
+  
+  .lista-tarefas h2 {
+    color: rgb(255, 255, 255);
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+  
+  }
+  
+  .lista-tarefas h2 img {
+    width: 30px;
+    margin-left: 10px;
+  }
+  
+  .linha {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgb(33, 35, 40);
+    border-radius: 30px;
+    padding-left: 20px;
+    margin-bottom: 25px;
+  }
+  
+  button {
+    border: none;
+    outline: none;
+    padding: 16px 50px;
+    background: rgb(40, 125, 255);
+    color: #fff;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 40px;
+  }
+  
+  ul li {
+    list-style: none;
+    font-size: 17px;
+    padding: 12px 8px 12px 50px;
+    user-select: none;
+    cursor: pointer;
+    position: relative;
+    color: rgb(255, 255, 255);
+  }
+  
+  ul li::before {
+    content: '';
+    position: absolute;
+    height: 25px;
+    width: 28px;
+    border-radius: 50%;
+    /* background-image: url('../img/circle.png'); */
+    background-size: cover;
+    background-position: center;
+    top: 10px;
+    left: 8px
+  }
+  
+  ul li.checado {
+    color: rgb(255, 255, 255);
+    text-decoration: line-through;
+  }
+  
+  /* ul li.checado::before {
+    background-image: url('../img/circle-check-big.png');
+  } */
+  
+  ul li span {
+    position: absolute;
+    right: 0;
+    top: 5px;
+    width: 40px;
+    height: 40px;
+    font-size: #555;
+    line-height: 40px;
+    text-align: center;
+    border-radius: 50%;
+  }
+  
+  ul li span:hover {
+    background: #edeef0;
+  }
