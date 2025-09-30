@@ -1,0 +1,13 @@
+input {
+    flex: 1;
+    border: none;
+    outline: none;
+    background: transparent;
+    padding: 10px;
+    font-weight: 14px;
+    color: rgb(255, 255, 255)
+}
+
+input::placeholder {
+    color: white;
+}
