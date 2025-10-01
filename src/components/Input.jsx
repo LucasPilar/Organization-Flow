@@ -1,12 +1,16 @@
-import React from 'react';
-// import App from'./App.css'
-import './Input.css';
+import React from "react";
+import "./Input.css";
 
-
-function Input() {
-    return (
-        <input type="text" id="input" placeholder="Adicione uma tarefa" autocomplete="false"></input>
-
-    );
+function Input({ value, onChange }) {
+  return (
+    <input
+      type="text"
+      id="input"
+      placeholder="Adicione uma tarefa"
+      autocomplete="false"
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+    ></input>
+  );
 }
 export default Input;

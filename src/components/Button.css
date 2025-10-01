@@ -1,0 +1,11 @@
+ button {
+    border: none;
+    outline: none;
+    padding: 16px 50px;
+    background: rgb(40, 125, 255);
+    color: #fff;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 40px;
+  }
+  
