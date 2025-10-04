@@ -9,7 +9,6 @@
   .lista-tarefas {
     width: 100%;
     max-width: 540px;
-    ;
     background: rgb(50, 53, 60);
     margin: 100px auto 20px;
     padding: 40px 30px 70px;
@@ -56,7 +55,7 @@
     height: 25px;
     width: 28px;
     border-radius: 50%;
-    /* background-image: url('../img/circle.png'); */
+    background-image: url('../../public/icons/circle.png');
     background-size: cover;
     background-position: center;
     top: 10px;
@@ -68,9 +67,9 @@
     text-decoration: line-through;
   }
   
-  /* ul li.checado::before {
-    background-image: url('../img/circle-check-big.png');
-  } */
+   ul li.checado::before {
+    background-image: url('../../public/icons/circle-check-big.png');
+  } 
   
   ul li span {
     position: absolute;
