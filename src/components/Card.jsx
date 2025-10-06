@@ -4,9 +4,12 @@ import Button from "./Button";
 import "./List.css";
 import { Trash2 } from "lucide-react";
 
-function Card({ onDelete }) {
+function Card({ id, initialTitle, onUpdateTitle, onDelete }) {
   const [tasks, setTasks] = useState([]);
   const [inputValue, setInputValue] = useState("");
+
+  const [isEditingTitle, setIsEditingTitle] = useState(false);
+  const [cardTitle, setCardTitle] = useState(initialTitle);
 
   const AdicionaNovaTarefa = () => {
     if (inputValue.trim() === "") {
@@ -23,6 +26,30 @@ function Card({ onDelete }) {
     setTasks([...tasks, newTask]);
     setInputValue("");
   };
+
+  //INICIO TITULO
+
+  const handleTitleClick = () => {
+    setIsEditingTitle(true);
+  };
+
+  const handleTitleChange = (e) => {
+    setCardTitle(e.target.value);
+  };
+
+  const handleTitleBlur = () => {
+    setIsEditingTitle(false);
+    onUpdateTitle(id, cardTitle);
+  };
+
+  const handleTitleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      handleTitleBlur();
+    }
+  };
+
+  //FIM Titulo
+
   const handleToggleTask = (taskId) => {
     setTasks(
       tasks.map((task) =>
@@ -39,7 +66,21 @@ function Card({ onDelete }) {
       <button onClick={onDelete} className="delete-card-button">
         <Trash2 />
       </button>
-      <h2>Lista de Tarefas </h2>
+
+      {setIsEditingTitle ? (
+        <input
+          type="text"
+          value={cardTitle}
+          onChange={handleTitleChange}
+          onBlur={handleTitleBlur}
+          onKeyDown={handleTitleKeyDown}
+          className="title-input"
+          autoFocus
+        />
+      ) : (
+        <h2 onclick={handleTitleClick}>{cardTitle}</h2>
+      )}
+
       <div class="linha">
         <Input value={inputValue} onChange={setInputValue} />
         <Button onClick={AdicionaNovaTarefa} />
