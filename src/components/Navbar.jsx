@@ -1,15 +1,12 @@
-import React from 'react';
-import './Navbar.css';
-import NavItem from './NavItem';
+import React from "react";
+import "./Navbar.css";
+import NavItem from "./NavItem";
 
-const Navbar = ({ logo, items }) => {
+const Navbar = ({ onAddCardClick }) => {
   return (
     <nav className="navbar">
-      <ul className="navbar-menu">
-        {items.map((item, index) => (
-          <NavItem key={index} label={item.label} href={item.href} />
-        ))}
-      </ul>
+      <NavItem text="Home" link="./app.jsx" />
+      <NavItem text="Adicionar Card" onClick={onAddCardClick} />
     </nav>
   );
 };

@@ -1,88 +1,124 @@
-.container {
-    width: 100%;
-    min-height: 100vh;
-    /*Define a altura mínima de um elemento. vh significa "viewport height" (altura da viewport).*/
-    background-color: rgb(33, 35, 40);
-    padding: 10px;
-  }
-  
-  .lista-tarefas {
-    width: 100%;
-    max-width: 540px;
-    background: rgb(50, 53, 60);
-    margin: 100px auto 20px;
-    padding: 40px 30px 70px;
-    border-radius: 10px;
-  }
-  
-  .lista-tarefas h2 {
-    color: rgb(255, 255, 255);
-    display: flex;
-    align-items: center;
-    margin-bottom: 20px;
-  
-  }
-  
-  .lista-tarefas h2 img {
-    width: 30px;
-    margin-left: 10px;
-  }
-  
-  .linha {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background: rgb(33, 35, 40);
-    border-radius: 30px;
-    padding-left: 20px;
-    margin-bottom: 25px;
-  }
-  
+/* .container {
+  width: 100%;
+
  
-  ul li {
-    list-style: none;
-    font-size: 17px;
-    padding: 12px 8px 12px 50px;
-    user-select: none;
-    cursor: pointer;
-    position: relative;
-    color: rgb(255, 255, 255);
-  }
-  
-  ul li::before {
-    content: '';
-    position: absolute;
-    height: 25px;
-    width: 28px;
-    border-radius: 50%;
-    background-image: url('../../public/icons/circle.png');
-    background-size: cover;
-    background-position: center;
-    top: 10px;
-    left: 8px
-  }
-  
-  ul li.checado {
-    color: rgb(255, 255, 255);
-    text-decoration: line-through;
-  }
-  
-   ul li.checado::before {
-    background-image: url('../../public/icons/circle-check-big.png');
-  } 
-  
-  ul li span {
-    position: absolute;
-    right: 0;
-    top: 5px;
-    width: 40px;
-    height: 40px;
-    font-size: #555;
-    line-height: 40px;
-    text-align: center;
-    border-radius: 50%;
-  }
-  
-  ul li span:hover {
-    background: #edeef0;
-  }
+  background-color: rgb(33, 35, 40);
+  padding: 10px;
+} */
+
+/* .lista-tarefas {
+  width: 50%;
+  max-width: 540px;
+  background: rgb(50, 53, 60);
+  margin: 100px auto 20px;
+  padding: 40px 30px 70px;
+  border-radius: 10px;
+} */
+
+.lista-tarefas h2 {
+  color: rgb(255, 255, 255);
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.lista-tarefas h2 img {
+  width: 30px;
+  margin-left: 10px;
+}
+
+.linha {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgb(33, 35, 40);
+  border-radius: 30px;
+  padding-left: 20px;
+  margin-bottom: 25px;
+}
+
+ul li {
+  list-style: none;
+  font-size: 17px;
+  padding: 12px 8px 12px 50px;
+  user-select: none;
+  cursor: pointer;
+  position: relative;
+  color: rgb(255, 255, 255);
+}
+
+ul li::before {
+  content: "";
+  position: absolute;
+  height: 25px;
+  width: 28px;
+  border-radius: 50%;
+  background-image: url("../../public/icons/circle.png");
+  background-size: cover;
+  background-position: center;
+  top: 10px;
+  left: 8px;
+}
+
+ul li.checado {
+  color: rgb(255, 255, 255);
+  text-decoration: line-through;
+}
+
+ul li.checado::before {
+  background-image: url("../../public/icons/circle-check-big.png");
+}
+
+ul li span {
+  position: absolute;
+  right: 0;
+  top: 5px;
+  width: 40px;
+  height: 40px;
+  font-size: #555;
+  line-height: 40px;
+  text-align: center;
+  border-radius: 50%;
+}
+
+ul li span:hover {
+  background: #edeef0;
+}
+
+.card-component {
+  position: relative; /* Necessário para o botão de deletar */
+  width: 100%; /* Ocupa o espaço que o flex-container dá */
+  max-width: 540px; /* Limite máximo de largura */
+  background: rgb(50, 53, 60);
+  padding: 40px 30px 70px;
+  border-radius: 10px;
+  /* GARANTA QUE NÃO HÁ 'margin: auto' AQUI! */
+  /* A margem externa (espaçamento) é controlada pelo 'gap' no .card-container */
+}
+
+.card-component h2 {
+  color: rgb(255, 255, 255);
+
+}
+
+.delete-card-button {
+  position: absolute; /* Posição absoluta em relação ao pai (.card-component) */
+  top: 26%;
+  right: 26%;
+  /* background: #ff5c5c; */
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  font-size: 20px;
+  line-height: 30px; /* Centraliza o 'X' verticalmente */
+  text-align: center;
+  cursor: pointer;
+  font-weight: bold;
+  /* background-image: url(""); */
+}
+
+.delete-card-button:hover {
+  background: #ff2e2e;
+}

@@ -1,11 +1,19 @@
-import React from 'react';
+import React from "react";
 
-const NavItem = ({ label, href }) => {
-  return (
-    <li className="nav-item">
-      <a href={href}>{label}</a>
-    </li>
-  );
-};
+function NavItem({ text, link, onClick }) {
+  if (onClick) {
+    return (
+      <button onClick={onClick} className="nav-item">
+        {text}
+      </button>
+    );
+  } else {
+    return (
+      <a href={link} className="nav-item">
+        {text}
+      </a>
+    );
+  }
+}
 
 export default NavItem;

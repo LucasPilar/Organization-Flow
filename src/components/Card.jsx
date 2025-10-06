@@ -2,8 +2,9 @@ import { useState } from "react";
 import Input from "./Input";
 import Button from "./Button";
 import "./List.css";
+import { Trash2 } from "lucide-react";
 
-function Card() {
+function Card({ onDelete }) {
   const [tasks, setTasks] = useState([]);
   const [inputValue, setInputValue] = useState("");
 
@@ -14,7 +15,7 @@ function Card() {
     }
 
     const newTask = {
-      id: Date.now,
+      id: Date.now(),
       text: inputValue,
       isChecked: false,
     };
@@ -34,13 +35,14 @@ function Card() {
     setTasks(tasks.filter((task) => task.id !== taskId));
   };
   return (
-    <div className="container">
-      <div className="lista-tarefas">
-        <h2>Lista de Tarefas </h2>
-        <div class="linha">
-          <Input value={inputValue} onChange={setInputValue} />
-          <Button onClick={AdicionaNovaTarefa} />
-        </div>
+    <div className="card-component">
+      <button onClick={onDelete} className="delete-card-button">
+        <Trash2 />
+      </button>
+      <h2>Lista de Tarefas </h2>
+      <div class="linha">
+        <Input value={inputValue} onChange={setInputValue} />
+        <Button onClick={AdicionaNovaTarefa} />
         <ul id="lista">
           {tasks.map((task) => (
             <li
