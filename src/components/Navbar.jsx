@@ -5,7 +5,7 @@ import NavItem from "./NavItem";
 const Navbar = ({ onAddCardClick }) => {
   return (
     <nav className="navbar">
-      <NavItem text="Home" link="./app.jsx" />
+      {/* <NavItem text="Home" link="./app.jsx" /> */}
       <NavItem text="Adicionar Card" onClick={onAddCardClick} />
     </nav>
   );

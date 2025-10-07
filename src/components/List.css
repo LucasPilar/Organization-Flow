@@ -83,27 +83,30 @@ ul li span:hover {
   color: rgb(255, 255, 255);
 }
 
+.card-header {
+  display: flex; /* 1. Ativa o Flexbox */
+  justify-content: space-between; /* 2. Empurra os itens para as extremidades (título para a esquerda, botão para a direita) */
+  align-items: center; /* 3. Alinha os itens verticalmente no centro */
+  margin-bottom: 20px; /* 4. Cria um espaço abaixo do cabeçalho, antes da linha de adicionar tarefas */
+}
+
+/* Ajuste opcional para o título ocupar o máximo de espaço possível */
+.card-title,
+.title-input {
+  flex-grow: 1; /* Permite que o título cresça e ocupe o espaço disponível */
+  margin-right: 15px; /* Adiciona um pequeno espaço para não colar no botão */
+}
+
+/* O botão de deletar não precisa de position: absolute agora */
 .delete-card-button {
-  position: absolute; /* Posição absoluta em relação ao pai (.card-component) */
-  top: 5%;
-  right: 10%;
-  color: white;
+  /* Remova 'position: absolute', 'top', e 'right' se ainda existirem */
+  background: transparent;
+  color: #aaa;
   border: none;
-  border-radius: 20px;
-  /* width: 45px;
-  height: 45px; */
-  font-size: 20px;
-  /* line-height: 30px;  */
-  text-align: center;
   cursor: pointer;
-  justify-content: center;
-  justify-items: center;
+  /* flex-shrink: 0; */ /* Garante que o botão não encolha */
 }
 
 .delete-card-button:hover {
-  background: #ff2e2e;
-}
-
-.title-input{
-  background-color: rgb(50, 53, 60);
+  color: #ff5c5c;
 }
