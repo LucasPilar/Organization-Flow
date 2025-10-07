@@ -69,14 +69,21 @@ ul li span:hover {
 }
 
 .card-component {
-  position: relative; /* Necessário para o botão de deletar */
-  width: 100%; /* Ocupa o espaço que o flex-container dá */
-  max-width: 540px; /* Limite máximo de largura */
+  /* position: relative; */
+  width: 100%;
+  max-width: 540px;
   background: rgb(50, 53, 60);
   padding: 40px 30px 70px;
   border-radius: 10px;
-  /* GARANTA QUE NÃO HÁ 'margin: auto' AQUI! */
-  /* A margem externa (espaçamento) é controlada pelo 'gap' no .card-container */
+  transition: box-shadow 0.2s ease-in-out, transform 0.2s ease-in-out;
+}
+
+.card-component.dragging {
+  opacity: 0.9; 
+  box-shadow: 0px 15px 25px rgba(0, 0, 0, 0.3); 
+  transform: scale(1.05); 
+  cursor: grabbing; 
+  z-index: 10; 
 }
 
 .card-component h2 {
@@ -84,10 +91,11 @@ ul li span:hover {
 }
 
 .card-header {
-  display: flex; /* 1. Ativa o Flexbox */
-  justify-content: space-between; /* 2. Empurra os itens para as extremidades (título para a esquerda, botão para a direita) */
-  align-items: center; /* 3. Alinha os itens verticalmente no centro */
-  margin-bottom: 20px; /* 4. Cria um espaço abaixo do cabeçalho, antes da linha de adicionar tarefas */
+  display: flex; 
+  justify-content: space-between;
+  align-items: center; 
+  margin-bottom: 20px; 
+  cursor: grab;
 }
 
 /* Ajuste opcional para o título ocupar o máximo de espaço possível */

@@ -10,7 +10,6 @@ import {
   useSensor,
   useSensors,
 } from "@dnd-kit/core";
-
 import {
   arrayMove,
   SortableContext,
@@ -18,94 +17,133 @@ import {
   rectSortingStrategy,
 } from "@dnd-kit/sortable";
 
+// Função para gerar IDs únicos
+
+const generateUniqueId = (prefix) => {
+  return `${prefix}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+};
+
 function App() {
-  // CORREÇÃO 1: Lógica de carregamento.
+  // O estado agora inclui as tarefas de cada card
   const [cardList, setCardList] = useState(() => {
-    const savedCards = localStorage.getItem("cardList"); // Pega os dados da chave "cardList"
-    if (savedCards) {
-      return JSON.parse(savedCards); // Se houver, converte de texto para array
-    } else {
-      return []; // Senão, começa com um array vazio
-    }
+    const savedCards = localStorage.getItem("cardList");
+    return savedCards ? JSON.parse(savedCards) : [];
   });
 
-  // Este useEffect para salvar.
   useEffect(() => {
     localStorage.setItem("cardList", JSON.stringify(cardList));
   }, [cardList]);
 
-  //ADICIONA CARD NOVO
   const addCard = () => {
     const newCard = {
-      id: Date.now(),
+       id: generateUniqueId("card"), // ID único e mais descritivo
       title: "Nova Lista",
+      tasks: [], // Cada card agora tem seu próprio array de tarefas
     };
-    setCardList((prevCardList) => [...prevCardList, newCard]);
+    setCardList((prev) => [...prev, newCard]);
   };
 
-  //TÍTULO CUSTOMIZADO
-  const updateTitle = (cardId, newTitle) => {
-    setCardList((prevList) =>
-      prevList.map((card) =>
+  const deleteCard = (cardId) => {
+    setCardList((prev) => prev.filter((card) => card.id !== cardId));
+  };
+
+  const updateCardTitle = (cardId, newTitle) => {
+    setCardList((prev) =>
+      prev.map((card) =>
         card.id === cardId ? { ...card, title: newTitle } : card
       )
     );
   };
 
-  //DELETA CARD
-  const deleteCard = (idToDelete) => {
-    setCardList((prevCardList) =>
-      prevCardList.filter((card) => card.id !== idToDelete)
+  // --- LÓGICA DAS TAREFAS (MOVIDA PARA CÁ) ---
+  const addTask = (cardId, taskText) => {
+    const newTask = {
+     id: generateUniqueId("task"), 
+      text: taskText,
+      isChecked: false,
+    };
+    setCardList((prev) =>
+      prev.map((card) =>
+        card.id === cardId ? { ...card, tasks: [...card.tasks, newTask] } : card
+      )
     );
   };
 
-  //ARRASTA E SOLTA
-  //Configuração de sensores
+  const deleteTask = (cardId, taskId) => {
+    setCardList((prev) =>
+      prev.map((card) => {
+        if (card.id === cardId) {
+          return {
+            ...card,
+            tasks: card.tasks.filter((task) => task.id !== taskId),
+          };
+        }
+        return card;
+      })
+    );
+  };
+
+  const toggleTask = (cardId, taskId) => {
+    setCardList((prev) =>
+      prev.map((card) => {
+        if (card.id === cardId) {
+          return {
+            ...card,
+            tasks: card.tasks.map((task) =>
+              task.id === taskId ? { ...task, isChecked: !task.isChecked } : task
+            ),
+          };
+        }
+        return card;
+      })
+    );
+  };
+
+  // --- LÓGICA DE ARRASTAR E SOLTAR ---
   const sensors = useSensors(
     useSensor(PointerSensor),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
-    })
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
   );
 
-  //Função de atualização de ordem
-  function handleDragEn(event) {
+  // CORREÇÃO: Renomeado para handleDragEnd para clareza
+  function handleDragEnd(event) {
     const { active, over } = event;
-    if (active.id !== over.id) {
-      setCardList((items) => {
-        const oldIndex = items.findIndex((item) => item.id == active.id);
-        const newIndex = items.findIndex((item) => item.id == over.id);
 
+    if (over && active.id !== over.id) {
+      setCardList((items) => {
+        const oldIndex = items.findIndex((item) => item.id === active.id);
+        const newIndex = items.findIndex((item) => item.id === over.id);
         return arrayMove(items, oldIndex, newIndex);
       });
     }
   }
 
-
-
   return (
     <DndContext
       sensors={sensors}
       collisionDetection={closestCenter}
-      onDragEnd={handleDragEn}
+      onDragEnd={handleDragEnd}
     >
-    <div className="App">
-      <Navbar onAddCardClick={addCard} />
-      <main className="card-container">
-      <SortableContext items={cardList} strategy={rectSortingStrategy}>
-        {cardList.map((card) => (
-          <Card
-            // CORREÇÃO 2: Passando TODAS as props necessárias
-            key={card.id}
-            id={card.id} // Passa o ID para ser usado internamente pelo Card
-            initialTitle={card.title} // Passa o TÍTULO do card atual
-            onDelete={() => deleteCard(card.id)}
-            onUpdateTitle={updateTitle} // Passa a função de atualização correta
-          />
-        ))}
-        </SortableContext>
-      </main>
-    </div>
+      <div className="App">
+        <Navbar onAddCardClick={addCard} />
+        <main className="card-container">
+          <SortableContext items={cardList} strategy={rectSortingStrategy}>
+            {cardList.map((card) => (
+              <Card
+                key={card.id}
+                id={card.id}
+                title={card.title}
+                tasks={card.tasks} // Passa as tarefas para o componente Card
+                onDelete={() => deleteCard(card.id)}
+                onUpdateTitle={updateCardTitle}
+                onAddTask={addTask}
+                onDeleteTask={deleteTask}
+                onToggleTask={toggleTask}
+              />
+            ))}
+          </SortableContext>
+        </main>
+      </div>
     </DndContext>
   );
 }

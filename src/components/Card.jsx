@@ -2,97 +2,83 @@ import { useState } from "react";
 import Input from "./Input";
 import Button from "./Button";
 import "./List.css";
-import { Trash2 } from "lucide-react";
+import { Trash2, GripVertical } from "lucide-react"; // Importa o ícone de "agarrar"
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import classNames from "classnames";
 
-function Card({ id, initialTitle, onUpdateTitle, onDelete }) {
-  const [tasks, setTasks] = useState([]);
+// O componente agora recebe todas as funções e dados de App.js
+function Card({
+  id,
+  title,
+  tasks,
+  onUpdateTitle,
+  onDelete,
+  onAddTask,
+  onDeleteTask,
+  onToggleTask,
+}) {
   const [inputValue, setInputValue] = useState("");
-
   const [isEditingTitle, setIsEditingTitle] = useState(false);
-  const [cardTitle, setCardTitle] = useState(initialTitle);
+  const [cardTitle, setCardTitle] = useState(title);
 
-  const { attributes, listeners, setNodeRef, transform, transition } =
-    useSortable({ id: id });
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } =
+    useSortable({ id });
 
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
   };
 
-  const AdicionaNovaTarefa = () => {
+  const cardClasses = classNames("card-component", { dragging: isDragging });
+
+  const handleAddTask = () => {
     if (inputValue.trim() === "") {
       alert("Adicione uma tarefa!");
       return;
     }
-
-    const newTask = {
-      id: Date.now(),
-      text: inputValue,
-      isChecked: false,
-    };
-
-    setTasks([...tasks, newTask]);
+    onAddTask(id, inputValue); // Chama a função que está em App.js
     setInputValue("");
-  };
-
-  //INICIO TITULO
-
-  const handleTitleClick = () => {
-    setIsEditingTitle(true);
-  };
-
-  const handleTitleChange = (e) => {
-    setCardTitle(e.target.value);
   };
 
   const handleTitleBlur = () => {
     setIsEditingTitle(false);
-    onUpdateTitle(id, cardTitle);
-  };
-
-  const handleTitleKeyDown = (e) => {
-    if (e.key === "Enter") {
-      handleTitleBlur();
+    if (cardTitle.trim() === "") {
+      setCardTitle(title); // Restaura o título original se ficar vazio
+    } else {
+      onUpdateTitle(id, cardTitle); // Atualiza o título em App.js
     }
   };
 
-  //FIM Titulo
-
-  const handleToggleTask = (taskId) => {
-    setTasks(
-      tasks.map((task) =>
-        task.id === taskId ? { ...task, isChecked: !task.isChecked } : task
-      )
-    );
+  const handleTitleKeyDown = (e) => {
+    if (e.key === "Enter") handleTitleBlur();
+    if (e.key === "Escape") {
+      setCardTitle(title);
+      setIsEditingTitle(false);
+    }
   };
 
-  const handleDeleteTask = (taskId) => {
-    setTasks(tasks.filter((task) => task.id !== taskId));
-  };
   return (
-    <div className="card-component"
-      ref={setNodeRef}
-      style={style}
-      {...attributes}
-      {...listeners}
-    >
+    <div className={cardClasses} ref={setNodeRef} style={style}>
       <div className="card-header">
+        {/* CORREÇÃO: Ícone para arrastar. Apenas ele tem os listeners. */}
+        <div className="drag-handle" {...attributes} {...listeners}>
+          <GripVertical size={20} />
+        </div>
+
         {isEditingTitle ? (
           <input
             type="text"
             value={cardTitle}
-            onChange={handleTitleChange}
+            onChange={(e) => setCardTitle(e.target.value)}
             onBlur={handleTitleBlur}
             onKeyDown={handleTitleKeyDown}
             className="title-input"
             autoFocus
           />
         ) : (
-          // CORREÇÃO 2: Usar 'onClick' com 'C' maiúsculo
-          <h2 onClick={handleTitleClick} className="card-title">
-            {cardTitle}
+          <h2 onClick={() => setIsEditingTitle(true)} className="card-title">
+            {title}
           </h2>
         )}
         <button onClick={onDelete} className="delete-card-button">
@@ -100,23 +86,23 @@ function Card({ id, initialTitle, onUpdateTitle, onDelete }) {
         </button>
       </div>
 
-      {/* --- SEÇÃO DO CORPO DO CARD --- */}
       <div className="linha">
         <Input value={inputValue} onChange={(value) => setInputValue(value)} />
-        <Button onClick={AdicionaNovaTarefa} />
+        <Button onClick={handleAddTask} />
       </div>
+
       <ul id="lista">
         {tasks.map((task) => (
           <li
             key={task.id}
             className={task.isChecked ? "checado" : ""}
-            onClick={() => handleToggleTask(task.id)}
+            onClick={() => onToggleTask(id, task.id)} // Chama a função de App.js
           >
             {task.text}
             <span
               onClick={(e) => {
-                e.stopPropagation();
-                handleDeleteTask(task.id);
+                e.stopPropagation(); // Impede que o clique no 'X' marque a tarefa
+                onDeleteTask(id, task.id); // Chama a função de App.js
               }}
             >
               X
