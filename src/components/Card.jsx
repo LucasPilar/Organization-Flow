@@ -6,6 +6,8 @@ import { Trash2, GripVertical } from "lucide-react"; // Importa o ícone de "aga
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import classNames from "classnames";
+import TaskItem from "./TaskItem";
+
 
 // O componente agora recebe todas as funções e dados de App.js
 function Card({
@@ -17,17 +19,21 @@ function Card({
   onAddTask,
   onDeleteTask,
   onToggleTask,
+  onUpdateTaskText,
 }) {
   const [inputValue, setInputValue] = useState("");
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [cardTitle, setCardTitle] = useState(title);
 
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } =
-    useSortable({ id });
+    useSortable({ 
+      id: id,
+      transition: null,
+    });
 
   const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
+    transform: isDragging ? CSS.Transform.toString(transform) : undefined,
+    
   };
 
   const cardClasses = classNames("card-component", { dragging: isDragging });
@@ -61,7 +67,6 @@ function Card({
   return (
     <div className={cardClasses} ref={setNodeRef} style={style}>
       <div className="card-header">
-        {/* CORREÇÃO: Ícone para arrastar. Apenas ele tem os listeners. */}
         <div className="drag-handle" {...attributes} {...listeners}>
           <GripVertical size={20} />
         </div>
@@ -79,7 +84,7 @@ function Card({
         ) : (
           <h2 onClick={() => setIsEditingTitle(true)} className="card-title">
             {title}
-          </h2>
+          </h2> 
         )}
         <button onClick={onDelete} className="delete-card-button">
           <Trash2 />
@@ -93,21 +98,15 @@ function Card({
 
       <ul id="lista">
         {tasks.map((task) => (
-          <li
+          <TaskItem
             key={task.id}
-            className={task.isChecked ? "checado" : ""}
-            onClick={() => onToggleTask(id, task.id)} // Chama a função de App.js
-          >
-            {task.text}
-            <span
-              onClick={(e) => {
-                e.stopPropagation(); // Impede que o clique no 'X' marque a tarefa
-                onDeleteTask(id, task.id); // Chama a função de App.js
-              }}
-            >
-              X
-            </span>
-          </li>
+            task={task}
+            cardId={id}
+            onToggleTask={onToggleTask}
+            onDeleteTask={onDeleteTask}
+            onUpdateTaskText={onUpdateTaskText}
+
+          />
         ))}
       </ul>
     </div>

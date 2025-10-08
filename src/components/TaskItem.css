@@ -1,0 +1,18 @@
+.task-edit-input {
+  width: 80%;
+  border: none;
+  /* background-color: #f0f0f0; */
+  padding: 4px;
+  border-radius: 3px;
+}
+
+.task-text {
+  cursor: pointer;
+  flex-grow: 1;
+}
+
+#lista li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}

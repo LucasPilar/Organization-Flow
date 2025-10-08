@@ -53,23 +53,17 @@ ul li.checado::before {
 }
 
 ul li span {
-  position: absolute;
   right: 0;
   top: 5px;
   width: 40px;
   height: 40px;
   font-size: #555;
-  line-height: 40px;
+
   text-align: center;
   border-radius: 50%;
 }
 
-ul li span:hover {
-  background: #edeef0;
-}
-
 .card-component {
-  /* position: relative; */
   width: 100%;
   max-width: 540px;
   background: rgb(50, 53, 60);
@@ -79,11 +73,11 @@ ul li span:hover {
 }
 
 .card-component.dragging {
-  opacity: 0.9; 
-  box-shadow: 0px 15px 25px rgba(0, 0, 0, 0.3); 
-  transform: scale(1.05); 
-  cursor: grabbing; 
-  z-index: 10; 
+  opacity: 0.9;
+  box-shadow: 0px 15px 25px rgba(0, 0, 0, 0.3);
+  transform: scale(1.05);
+  cursor: grabbing;
+  z-index: 10;
 }
 
 .card-component h2 {
@@ -91,28 +85,24 @@ ul li span:hover {
 }
 
 .card-header {
-  display: flex; 
+  display: flex;
   justify-content: space-between;
-  align-items: center; 
-  margin-bottom: 20px; 
+  align-items: center;
+  margin-bottom: 20px;
   cursor: grab;
 }
 
-/* Ajuste opcional para o título ocupar o máximo de espaço possível */
 .card-title,
 .title-input {
-  flex-grow: 1; /* Permite que o título cresça e ocupe o espaço disponível */
-  margin-right: 15px; /* Adiciona um pequeno espaço para não colar no botão */
+  flex-grow: 1;
+  margin-right: 15px;
 }
 
-/* O botão de deletar não precisa de position: absolute agora */
 .delete-card-button {
-  /* Remova 'position: absolute', 'top', e 'right' se ainda existirem */
   background: transparent;
   color: #aaa;
   border: none;
   cursor: pointer;
-  /* flex-shrink: 0; */ /* Garante que o botão não encolha */
 }
 
 .delete-card-button:hover {

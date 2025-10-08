@@ -17,6 +17,8 @@ import {
   rectSortingStrategy,
 } from "@dnd-kit/sortable";
 
+import { motion, AnimatePresence } from "framer-motion";
+
 // Função para gerar IDs únicos
 
 const generateUniqueId = (prefix) => {
@@ -36,7 +38,7 @@ function App() {
 
   const addCard = () => {
     const newCard = {
-       id: generateUniqueId("card"), // ID único e mais descritivo
+      id: generateUniqueId("card"), // ID único e mais descritivo
       title: "Nova Lista",
       tasks: [], // Cada card agora tem seu próprio array de tarefas
     };
@@ -58,7 +60,7 @@ function App() {
   // --- LÓGICA DAS TAREFAS (MOVIDA PARA CÁ) ---
   const addTask = (cardId, taskText) => {
     const newTask = {
-     id: generateUniqueId("task"), 
+      id: generateUniqueId("task"),
       text: taskText,
       isChecked: false,
     };
@@ -90,7 +92,9 @@ function App() {
           return {
             ...card,
             tasks: card.tasks.map((task) =>
-              task.id === taskId ? { ...task, isChecked: !task.isChecked } : task
+              task.id === taskId
+                ? { ...task, isChecked: !task.isChecked }
+                : task
             ),
           };
         }
@@ -118,6 +122,23 @@ function App() {
     }
   }
 
+  //update de atividade individual
+  const updateTaskText = (cardId, taskId, newText) => {
+    setCardList((prev) =>
+      prev.map((card) => {
+        if (card.id === cardId) {
+          return {
+            ...card,
+            tasks: card.tasks.map((task) =>
+              task.id === taskId ? { ...task, text: newText } : task
+            ),
+          };
+        }
+        return card;
+      })
+    );
+  };
+
   return (
     <DndContext
       sensors={sensors}
@@ -128,19 +149,31 @@ function App() {
         <Navbar onAddCardClick={addCard} />
         <main className="card-container">
           <SortableContext items={cardList} strategy={rectSortingStrategy}>
-            {cardList.map((card) => (
-              <Card
-                key={card.id}
-                id={card.id}
-                title={card.title}
-                tasks={card.tasks} // Passa as tarefas para o componente Card
-                onDelete={() => deleteCard(card.id)}
-                onUpdateTitle={updateCardTitle}
-                onAddTask={addTask}
-                onDeleteTask={deleteTask}
-                onToggleTask={toggleTask}
-              />
-            ))}
+            <AnimatePresence>
+              {cardList.map((card) => (
+                <motion.div
+                  key={card.id}
+                  layout
+                  initial={{ opacity: 0, scale: 0.8, y: 50 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.8, x: -100 }}
+                  transition={{ type: "spring", stiffness: 200, damping: 25 }}
+                >
+                  <Card
+                    key={card.id}
+                    id={card.id}
+                    title={card.title}
+                    tasks={card.tasks} // Passa as tarefas para o componente Card
+                    onDelete={() => deleteCard(card.id)}
+                    onUpdateTitle={updateCardTitle}
+                    onAddTask={addTask}
+                    onDeleteTask={deleteTask}
+                    onToggleTask={toggleTask}
+                    onUpdateTaskText={updateTaskText}
+                  />
+                </motion.div>
+              ))}
+            </AnimatePresence>
           </SortableContext>
         </main>
       </div>
