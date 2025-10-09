@@ -1,15 +1,10 @@
-# Getting Started with Create React App
+### Dentro da pasta backend
 
-This project was made with [Create React App](https://github.com/facebook/create-react-app).
+Rode `npm run dev` para rodar o back-end;
 
-## Available Scripts
 
-In the project directory, you can run:
+### Dentro da pasta src 
 
-### `npm start`
+Rode o comando `npm start` para rodar o front-end;
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.

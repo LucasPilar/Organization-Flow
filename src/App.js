@@ -1,183 +1,56 @@
-import React, { useState, useEffect } from "react";
-import Card from "./components/Card";
-import Navbar from "./components/Navbar";
-import "./App.css";
+import React, { useState } from "react";
 import {
-  DndContext,
-  closestCenter,
-  KeyboardSensor,
-  PointerSensor,
-  useSensor,
-  useSensors,
-} from "@dnd-kit/core";
-import {
-  arrayMove,
-  SortableContext,
-  sortableKeyboardCoordinates,
-  rectSortingStrategy,
-} from "@dnd-kit/sortable";
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
 
-import { motion, AnimatePresence } from "framer-motion";
-
-// Função para gerar IDs únicos
-
-const generateUniqueId = (prefix) => {
-  return `${prefix}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-};
+//Pages
+import LoginPage from "./pages/LoginPage";
+import RegisterPage from "./pages/RegisterPage";
+import BoardPage from "./pages/BoardPage";
 
 function App() {
-  // O estado agora inclui as tarefas de cada card
-  const [cardList, setCardList] = useState(() => {
-    const savedCards = localStorage.getItem("cardList");
-    return savedCards ? JSON.parse(savedCards) : [];
-  });
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  useEffect(() => {
-    localStorage.setItem("cardList", JSON.stringify(cardList));
-  }, [cardList]);
-
-  const addCard = () => {
-    const newCard = {
-      id: generateUniqueId("card"), // ID único e mais descritivo
-      title: "Nova Lista",
-      tasks: [], // Cada card agora tem seu próprio array de tarefas
-    };
-    setCardList((prev) => [...prev, newCard]);
+  const handleLoginSuccess = () => {
+    setIsAuthenticated(true);
   };
 
-  const deleteCard = (cardId) => {
-    setCardList((prev) => prev.filter((card) => card.id !== cardId));
-  };
-
-  const updateCardTitle = (cardId, newTitle) => {
-    setCardList((prev) =>
-      prev.map((card) =>
-        card.id === cardId ? { ...card, title: newTitle } : card
-      )
-    );
-  };
-
-  // --- LÓGICA DAS TAREFAS (MOVIDA PARA CÁ) ---
-  const addTask = (cardId, taskText) => {
-    const newTask = {
-      id: generateUniqueId("task"),
-      text: taskText,
-      isChecked: false,
-    };
-    setCardList((prev) =>
-      prev.map((card) =>
-        card.id === cardId ? { ...card, tasks: [...card.tasks, newTask] } : card
-      )
-    );
-  };
-
-  const deleteTask = (cardId, taskId) => {
-    setCardList((prev) =>
-      prev.map((card) => {
-        if (card.id === cardId) {
-          return {
-            ...card,
-            tasks: card.tasks.filter((task) => task.id !== taskId),
-          };
-        }
-        return card;
-      })
-    );
-  };
-
-  const toggleTask = (cardId, taskId) => {
-    setCardList((prev) =>
-      prev.map((card) => {
-        if (card.id === cardId) {
-          return {
-            ...card,
-            tasks: card.tasks.map((task) =>
-              task.id === taskId
-                ? { ...task, isChecked: !task.isChecked }
-                : task
-            ),
-          };
-        }
-        return card;
-      })
-    );
-  };
-
-  // --- LÓGICA DE ARRASTAR E SOLTAR ---
-  const sensors = useSensors(
-    useSensor(PointerSensor),
-    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
-  );
-
-  // CORREÇÃO: Renomeado para handleDragEnd para clareza
-  function handleDragEnd(event) {
-    const { active, over } = event;
-
-    if (over && active.id !== over.id) {
-      setCardList((items) => {
-        const oldIndex = items.findIndex((item) => item.id === active.id);
-        const newIndex = items.findIndex((item) => item.id === over.id);
-        return arrayMove(items, oldIndex, newIndex);
-      });
-    }
-  }
-
-  //update de atividade individual
-  const updateTaskText = (cardId, taskId, newText) => {
-    setCardList((prev) =>
-      prev.map((card) => {
-        if (card.id === cardId) {
-          return {
-            ...card,
-            tasks: card.tasks.map((task) =>
-              task.id === taskId ? { ...task, text: newText } : task
-            ),
-          };
-        }
-        return card;
-      })
-    );
+  const handleLogout = () => {
+    setIsAuthenticated(false);
   };
 
   return (
-    <DndContext
-      sensors={sensors}
-      collisionDetection={closestCenter}
-      onDragEnd={handleDragEnd}
-    >
-      <div className="App">
-        <Navbar onAddCardClick={addCard} />
-        <main className="card-container">
-          <SortableContext items={cardList} strategy={rectSortingStrategy}>
-            <AnimatePresence>
-              {cardList.map((card) => (
-                <motion.div
-                  key={card.id}
-                  layout
-                  initial={{ opacity: 0, scale: 0.8, y: 50 }}
-                  animate={{ opacity: 1, scale: 1, y: 0 }}
-                  exit={{ opacity: 0, scale: 0.8, x: -100 }}
-                  transition={{ type: "spring", stiffness: 200, damping: 25 }}
-                >
-                  <Card
-                    key={card.id}
-                    id={card.id}
-                    title={card.title}
-                    tasks={card.tasks} // Passa as tarefas para o componente Card
-                    onDelete={() => deleteCard(card.id)}
-                    onUpdateTitle={updateCardTitle}
-                    onAddTask={addTask}
-                    onDeleteTask={deleteTask}
-                    onToggleTask={toggleTask}
-                    onUpdateTaskText={updateTaskText}
-                  />
-                </motion.div>
-              ))}
-            </AnimatePresence>
-          </SortableContext>
-        </main>
-      </div>
-    </DndContext>
+    <Router>
+      <Routes>
+        <Route
+          path="/login"
+          element={<LoginPage onLoginSuccess={handleLoginSuccess} />}
+        />
+
+        <Route path="/register" element={<RegisterPage />} />
+
+        <Route
+          path="/board"
+          element={
+            isAuthenticated ? (
+              <BoardPage onLogout={handleLogout} />
+            ) : (
+              <Navigate to="/login" replace />
+            )
+          }
+        />
+
+        <Route
+          path="*"
+          element={
+            <Navigate to={isAuthenticated ? "/board" : "/login"} replace />
+          }
+        />
+      </Routes>
+    </Router>
   );
 }
 
