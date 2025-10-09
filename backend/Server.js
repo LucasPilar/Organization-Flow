@@ -11,7 +11,9 @@ app.use(express.json());
 
 const dbUser= process.env.DB_USER;
 const dbPassword= process.env.DB_PASSWORD;
-const mongoURI=`mongodb+srv://´${dbUser}´:${dbPassword}@organization-flow-clust.bva4fna.mongodb.net/?retryWrites=true&w=majority&appName=Organization-Flow-Cluster`
+const dbClusterAddress = 'organization-flow-clust.bva4fna.mongodb.net'
+const dbName ='Organization-Flow-Cluster'
+const mongoURI=`mongodb+srv://´${dbUser}´:${dbPassword}@${dbClusterAddress}/?retryWrites=true&w=majority&appName=${dbName}`
 
 //Conexão com o BD
 mongoose
