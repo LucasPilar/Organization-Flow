@@ -1,0 +1,111 @@
+/* src/pages/AuthForm.css */
+
+ .auth-page-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 20px;
+}
+
+.auth-form-container {
+  background-color: var(--container-background);
+  color: var(--dark-text);
+  padding: 40px 30px;
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.auth-form-container h2 {
+  margin-top: 0;
+  margin-bottom: 25px;
+  font-size: 2rem;
+  font-weight: 600;
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.auth-input {
+  padding: 14px;
+  border: 1px solid var(--input-border);
+  border-radius: 6px;
+  font-size: 1rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.auth-input:focus {
+  outline: none;
+  border-color: var(--primary-blue);
+  box-shadow: 0 0 0 3px rgba(40, 125, 255, 0.2);
+}
+
+.auth-button {
+  padding: 14px;
+  border: none;
+  border-radius: 6px;
+  background-color: var(--primary-blue);
+  color: white;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.1s;
+}
+
+.auth-button:hover {
+  background-color: rgb(30, 105, 225);
+}
+
+.auth-button:active {
+  transform: scale(0.98);
+}
+
+.auth-link-text {
+  margin-top: 20px;
+  font-size: 0.9rem;
+}
+
+.auth-link-text a {
+  color: var(--primary-blue);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.auth-link-text a:hover {
+  text-decoration: underline;
+}
+
+.auth-message {
+  padding: 10px;
+  border-radius: 4px;
+  margin-top: 15px;
+  font-weight: 500;
+}
+
+.auth-message.error {
+  background-color: rgba(229, 57, 53, 0.1);
+  color: var(--error-red);
+}
+
+.auth-message.success {
+  background-color: rgba(67, 160, 71, 0.1);
+  color: var(--success-green);
+} 

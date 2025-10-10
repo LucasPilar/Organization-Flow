@@ -1,13 +1,13 @@
 import { useState } from "react";
 import Input from "./Input";
 import Button from "./Button";
-import "./List.css";
+
 import { Trash2, GripVertical } from "lucide-react"; // Importa o ícone de "agarrar"
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import classNames from "classnames";
 import TaskItem from "./TaskItem";
-
+import "./List.css";
 
 // O componente agora recebe todas as funções e dados de App.js
 function Card({
@@ -25,15 +25,20 @@ function Card({
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [cardTitle, setCardTitle] = useState(title);
 
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging } =
-    useSortable({ 
-      id: id,
-      transition: null,
-    });
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({
+    id: id,
+    transition: null,
+  });
 
   const style = {
     transform: isDragging ? CSS.Transform.toString(transform) : undefined,
-    
   };
 
   const cardClasses = classNames("card-component", { dragging: isDragging });
@@ -84,7 +89,7 @@ function Card({
         ) : (
           <h2 onClick={() => setIsEditingTitle(true)} className="card-title">
             {title}
-          </h2> 
+          </h2>
         )}
         <button onClick={onDelete} className="delete-card-button">
           <Trash2 />
@@ -105,7 +110,6 @@ function Card({
             onToggleTask={onToggleTask}
             onDeleteTask={onDeleteTask}
             onUpdateTaskText={onUpdateTaskText}
-
           />
         ))}
       </ul>

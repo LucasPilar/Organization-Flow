@@ -70,6 +70,7 @@ ul li span {
   padding: 40px 30px 70px;
   border-radius: 10px;
   transition: box-shadow 0.2s ease-in-out, transform 0.2s ease-in-out;
+ 
 }
 
 .card-component.dragging {
@@ -108,3 +109,5 @@ ul li span {
 .delete-card-button:hover {
   color: #ff5c5c;
 }
+
+

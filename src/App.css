@@ -1,15 +1,113 @@
 * {
   margin: 0;
   padding: 0;
-  font-family: "Poppins", sans-serif;
+  font-family: "Space Grotesk", sans-serif;
   box-sizing: border-box;
 }
 
-/* Regra para o container dos cards - SEM ANINHAMENTO */
+:root {
+  --dark-background: rgb(50, 53, 60);
+  --primary-blue: rgb(40, 125, 255);
+  --light-text: #f5f5f5;
+  --dark-text: #1c1c1c;
+  --container-background: #ffffff;
+  --input-border: #e0e0e0;
+  --error-red: #e53935;
+  --success-green: #43a047;
+}
+
+body {
+  margin: 0;
+  font-family: sans-serif;
+  background-color: var(--dark-background);
+}
+
 .card-container {
   display: flex;
   flex-wrap: wrap;
-  justify-content: center; /* Use 'flex-start' se quiser alinhar à esquerda */
+  justify-content: center;
   gap: 20px;
   padding: 20px;
+  box-shadow: #1c1c1c;
+}
+
+.login-container {
+  display: flex;
+  flex-direction: column; /* coloca o conteúdo um embaixo do outro */
+  justify-content: center;
+  align-items: center;
+  height: 100vh; /* ocupa a tela toda */
+  text-align: center;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  width: 300px; /* largura fixa opcional */
+  gap: 10px; /* espaçamento entre os inputs */
+}
+
+/* Ajustes visuais dos campos */
+input {
+  padding: 10px;
+  font-size: 16px;
+}
+
+button {
+  padding: 10px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+.login-title {
+  color: white;
+}
+.register-question {
+  margin-top: 20px;
+  color: white;
+  font-size: 16px;
+}
+
+.register-icon {
+  text-decoration: none;
+  color: white;
+}
+
+.register-icon :hover {
+  background-color: #0056b3;
+}
+
+/*Estilização página de registro*/
+.register-container {
+  display: flex;
+  flex-direction: column; /* coloca o conteúdo um embaixo do outro */
+  justify-content: center;
+  align-items: center;
+  height: 100vh; /* ocupa a tela toda */
+  text-align: center;
+}
+
+.register-title {
+  color: white;
+}
+.login-question {
+  margin-top: 20px;
+  color: white;
+  font-size: 16px;
+}
+
+.login-icon {
+  text-decoration: none;
+  color: white;
+}
+
+.login-icon :hover {
+  background-color: #0056b3;
 }

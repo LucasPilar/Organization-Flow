@@ -1,3 +1,5 @@
+// src/App.js (VERSÃO CORRETA E FINAL)
+
 import React, { useState } from "react";
 import {
   BrowserRouter as Router,
@@ -6,18 +8,22 @@ import {
   Navigate,
 } from "react-router-dom";
 
-//Pages
+// Importação das páginas
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import BoardPage from "./pages/BoardPage";
 
 function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  // ATENÇÃO: Para desenvolvimento, 'true' permite acesso direto à BoardPage.
+  // Mude para 'false' para testar o fluxo de login completo ou para produção.
+  const [isAuthenticated, setIsAuthenticated] = useState(true);
 
+  // Função que será passada para a LoginPage para atualizar o estado após o login
   const handleLoginSuccess = () => {
     setIsAuthenticated(true);
   };
 
+  // Função que será passada para a BoardPage (e depois para a Navbar) para fazer logout
   const handleLogout = () => {
     setIsAuthenticated(false);
   };
