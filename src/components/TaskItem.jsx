@@ -1,84 +1,74 @@
-// src/components/TaskItem.jsx (CORRIGIDO)
+import React, { useState } from 'react';
+import { Trash2 } from 'lucide-react';
+import './TaskItem.css'; 
 
-import React, { useState, useEffect, useRef } from "react";
-import "./TaskItem.css";
-
-function TaskItem({
-  task,
-  cardId,
-  onToggleTask,
-  onDeleteTask,
-  onUpdateTaskText,
-}) {
+function TaskItem({ task, onDelete, onToggle, onUpdateText }) {
+ 
   const [isEditing, setIsEditing] = useState(false);
-  const [text, setText] = useState(task.text);
-  const inputRef = useRef(null);
 
-  useEffect(() => {
-    if (isEditing) {
-      inputRef.current?.focus();
-    }
-  }, [isEditing]);
+  const [editText, setEditText] = useState(task.text);
 
-  const handleDoubleClick = () => {
-    setIsEditing(true);
-  };
 
   const handleUpdate = () => {
-    if (text.trim() === "") {
-      setText(task.text);
-    } else {
-      onUpdateTaskText(cardId, task.id, text);
-    }
     setIsEditing(false);
+   
+    if (editText.trim() && editText !== task.text) {
+      onUpdateText(editText);
+    } else {
+     
+      setEditText(task.text);
+    }
   };
 
+  
   const handleKeyDown = (e) => {
-    if (e.key === "Enter") {
+    if (e.key === 'Enter') {
       handleUpdate();
-    } else if (e.key === "Escape") {
-      setText(task.text);
+    } else if (e.key === 'Escape') {
+    
+      setEditText(task.text);
       setIsEditing(false);
     }
   };
 
-  // A CHAVE ERRADA QUE ESTAVA AQUI FOI REMOVIDA.
-
-  return (
-    <li
-      className={task.isChecked ? "checado" : ""}
-      onDoubleClick={handleDoubleClick}
-    >
-      {isEditing ? (
+ 
+  if (isEditing) {
+    return (
+      <div className="task-item editing">
         <input
-          ref={inputRef}
           type="text"
-          value={text}
-          onChange={(e) => setText(e.target.value)}
-          onBlur={handleUpdate}
+          value={editText}
+          onChange={(e) => setEditText(e.target.value)}
+          onBlur={handleUpdate} 
           onKeyDown={handleKeyDown}
+          autoFocus 
           className="task-edit-input"
         />
-      ) : (
-        <>
-          <span
-            className="task-text"
-            onClick={() => onToggleTask(cardId, task.id)}
-          >
-            {task.text}
-          </span>
-          <span
-            className="delete-task"
-            onClick={(e) => {
-              e.stopPropagation();
-              onDeleteTask(cardId, task.id);
-            }}
-          >
-            X
-          </span>
-        </>
-      )}
-    </li>
+      </div>
+    );
+  }
+
+ 
+  return (
+    <div className={`task-item ${task.isChecked ? 'checked' : ''}`}>
+     
+      <input
+        type="checkbox"
+        checked={task.isChecked}
+        onChange={onToggle}
+        className="task-checkbox"
+      />
+
+ 
+      <span onDoubleClick={() => setIsEditing(true)} className="task-text">
+        {task.text}
+      </span>
+
+     
+      <button onClick={onDelete} className="delete-task-button">
+        <Trash2 size={16} />
+      </button>
+    </div>
   );
 }
 

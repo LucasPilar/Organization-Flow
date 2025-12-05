@@ -1,63 +1,28 @@
-import { useState } from "react";
-import Input from "./Input";
-import Button from "./Button";
 
-import { Trash2, GripVertical } from "lucide-react"; // Importa o ícone de "agarrar"
+
+import React, { useState } from "react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import { GripVertical, Trash2 } from "lucide-react";
 import classNames from "classnames";
-import TaskItem from "./TaskItem";
+import { motion, AnimatePresence } from "framer-motion";
+import TaskItem from "./TaskItem";  
 import "./List.css";
 
-// O componente agora recebe todas as funções e dados de App.js
-function Card({
-  id,
-  title,
-  tasks,
-  onUpdateTitle,
-  onDelete,
-  onAddTask,
-  onDeleteTask,
-  onToggleTask,
-  onUpdateTaskText,
-}) {
-  const [inputValue, setInputValue] = useState("");
+function Card({ id, title, tasks, onDelete, onUpdateTitle, onAddTask, onDeleteTask, onToggleTask, onUpdateTaskText }) {
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [cardTitle, setCardTitle] = useState(title);
+  const [newTaskText, setNewTaskText] = useState("");
 
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-    isDragging,
-  } = useSortable({
-    id: id,
-    transition: null,
-  });
-
-  const style = {
-    transform: isDragging ? CSS.Transform.toString(transform) : undefined,
-  };
-
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id });
+  const style = { transform: CSS.Transform.toString(transform), transition };
   const cardClasses = classNames("card-component", { dragging: isDragging });
 
-  const handleAddTask = () => {
-    if (inputValue.trim() === "") {
-      alert("Adicione uma tarefa!");
-      return;
-    }
-    onAddTask(id, inputValue); // Chama a função que está em App.js
-    setInputValue("");
-  };
 
   const handleTitleBlur = () => {
     setIsEditingTitle(false);
-    if (cardTitle.trim() === "") {
-      setCardTitle(title); // Restaura o título original se ficar vazio
-    } else {
-      onUpdateTitle(id, cardTitle); // Atualiza o título em App.js
+    if (cardTitle !== title) {
+      onUpdateTitle(id, cardTitle);
     }
   };
 
@@ -69,13 +34,21 @@ function Card({
     }
   };
 
+
+  const handleAddTask = (e) => {
+    e.preventDefault();
+    if (newTaskText.trim()) {
+      onAddTask(id, newTaskText);
+      setNewTaskText("");
+    }
+  };
+
   return (
-    <div className={cardClasses} ref={setNodeRef} style={style}>
+    <div ref={setNodeRef} style={style} className={cardClasses}>
       <div className="card-header">
-        <div className="drag-handle" {...attributes} {...listeners}>
+        <div {...attributes} {...listeners} className="drag-handle">
           <GripVertical size={20} />
         </div>
-
         {isEditingTitle ? (
           <input
             type="text"
@@ -83,36 +56,44 @@ function Card({
             onChange={(e) => setCardTitle(e.target.value)}
             onBlur={handleTitleBlur}
             onKeyDown={handleTitleKeyDown}
-            className="title-input"
             autoFocus
+            className="title-input"
           />
         ) : (
           <h2 onClick={() => setIsEditingTitle(true)} className="card-title">
-            {title}
+            {cardTitle}
           </h2>
         )}
         <button onClick={onDelete} className="delete-card-button">
-          <Trash2 />
+          <Trash2 size={18} />
         </button>
       </div>
 
-      <div className="linha">
-        <Input value={inputValue} onChange={(value) => setInputValue(value)} />
-        <Button onClick={handleAddTask} />
+      <div className="card-body">
+        <AnimatePresence>
+          {tasks.map((task) => (
+            <motion.div key={task._id} layout initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+              <TaskItem
+                task={task}
+                onDelete={() => onDeleteTask(id, task._id)}
+                onToggle={() => onToggleTask(id, task._id, task.isChecked)}
+                onUpdateText={(newText) => onUpdateTaskText(id, task._id, newText)}
+              />
+            </motion.div>
+          ))}
+        </AnimatePresence>
       </div>
 
-      <ul id="lista">
-        {tasks.map((task) => (
-          <TaskItem
-            key={task.id}
-            task={task}
-            cardId={id}
-            onToggleTask={onToggleTask}
-            onDeleteTask={onDeleteTask}
-            onUpdateTaskText={onUpdateTaskText}
-          />
-        ))}
-      </ul>
+      <form onSubmit={handleAddTask} className="add-task-form">
+        <input
+          type="text"
+          value={newTaskText}
+          onChange={(e) => setNewTaskText(e.target.value)}
+          placeholder="Adicionar uma tarefa..."
+          className="add-task-input"
+        />
+        <button type="submit">+</button>
+      </form>
     </div>
   );
 }

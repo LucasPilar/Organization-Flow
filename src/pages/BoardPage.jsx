@@ -1,16 +1,11 @@
-// src/pages/BoardPage.jsx (VERSÃO CORRETA)
-
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import api from "../services/api";
 
-// Componentes
-import Card from "../components/Card"; // Caminho corrigido com ../
-import Navbar from "../components/Navbar"; // Caminho corrigido com ../
+import Card from "../components/Card";
+import Navbar from "../components/Navbar";
+import "../App.css";
 
-// Estilos
-import "../App.css"; // Supondo que os estilos principais estão aqui
-
-// dnd-kit (biblioteca de arrastar e soltar)
 import {
   DndContext,
   closestCenter,
@@ -26,115 +21,166 @@ import {
   rectSortingStrategy,
 } from "@dnd-kit/sortable";
 
-// Função para gerar IDs únicos
-const generateUniqueId = (prefix) => {
-  return `${prefix}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+const setAuthToken = (token) => {
+  if (token) {
+    api.defaults.headers.common["x-auth-token"] = token;
+  } else {
+    delete api.defaults.headers.common["x-auth-token"];
+  }
 };
 
-// O componente recebe a função 'onLogout' do App.js
 function BoardPage({ onLogout }) {
-  const [cardList, setCardList] = useState(() => {
-    const savedCards = localStorage.getItem("cardList");
-    return savedCards ? JSON.parse(savedCards) : [];
-  });
+  const [cardList, setCardList] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const fetchCards = useCallback(async () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      onLogout();
+      return;
+    }
+    setAuthToken(token);
+    try {
+      setLoading(true);
+      const res = await api.get("/cards");
+      const formattedCards = res.data.map((card) => ({
+        ...card,
+        id: card._id,
+      }));
+      setCardList(formattedCards);
+    } catch (err) {
+      console.error("Erro ao buscar cards:", err);
+      if (err.response && err.response.status === 401) {
+        onLogout();
+      }
+    } finally {
+      setLoading(false);
+    }
+  }, [onLogout]);
 
   useEffect(() => {
-    localStorage.setItem("cardList", JSON.stringify(cardList));
-  }, [cardList]);
+    fetchCards();
+  }, [fetchCards]);
 
-  // --- Funções de Manipulação dos Cards e Tarefas ---
-
-  const addCard = () => {
-    const newCard = {
-      id: generateUniqueId("card"),
-      title: "Nova Lista",
-      tasks: [],
-    };
-    setCardList((prev) => [...prev, newCard]);
+  const addCard = async () => {
+    try {
+      const res = await api.post("/cards", { title: "Nova Lista" });
+      const newCard = { ...res.data, id: res.data._id };
+      setCardList((prev) => [...prev, newCard]);
+    } catch (err) {
+      console.error("Erro ao adicionar card:", err);
+    }
   };
 
-  const deleteCard = (cardId) => {
-    setCardList((prev) => prev.filter((card) => card.id !== cardId));
+  const deleteCard = async (cardId) => {
+    try {
+      await api.delete(`/cards/${cardId}`);
+      setCardList((prev) => prev.filter((card) => card.id !== cardId));
+    } catch (err) {
+      console.error("Erro ao deletar card:", err);
+    }
   };
 
-  const updateCardTitle = (cardId, newTitle) => {
-    setCardList((prev) =>
-      prev.map((card) =>
-        card.id === cardId ? { ...card, title: newTitle } : card
-      )
+  const updateCardTitle = async (cardId, newTitle) => {
+    const originalCardList = [...cardList];
+    const updatedList = cardList.map((card) =>
+      card.id === cardId ? { ...card, title: newTitle } : card
     );
+    setCardList(updatedList);
+    try {
+      await api.put(`/cards/${cardId}`, { title: newTitle });
+    } catch (err) {
+      console.error("Erro ao atualizar título:", err);
+      setCardList(originalCardList);
+    }
   };
 
-  const addTask = (cardId, taskText) => {
-    const newTask = {
-      id: generateUniqueId("task"),
-      text: taskText,
-      isChecked: false,
-    };
-    setCardList((prev) =>
-      prev.map((card) =>
+  const addTask = async (cardId, taskText) => {
+    try {
+      const res = await api.post(`/cards/${cardId}/tasks`, { text: taskText });
+      const newTask = res.data;
+      const updatedList = cardList.map((card) =>
         card.id === cardId ? { ...card, tasks: [...card.tasks, newTask] } : card
-      )
-    );
+      );
+      setCardList(updatedList);
+    } catch (err) {
+      console.error("Erro ao adicionar tarefa:", err);
+    }
   };
 
-  const deleteTask = (cardId, taskId) => {
-    setCardList((prev) =>
-      prev.map((card) =>
+  const deleteTask = async (cardId, taskId) => {
+    try {
+      await api.delete(`/cards/${cardId}/tasks/${taskId}`);
+      const updatedList = cardList.map((card) =>
         card.id === cardId
-          ? { ...card, tasks: card.tasks.filter((task) => task.id !== taskId) }
+          ? { ...card, tasks: card.tasks.filter((task) => task._id !== taskId) }
           : card
-      )
-    );
+      );
+      setCardList(updatedList);
+    } catch (err) {
+      console.error("Erro ao deletar tarefa:", err);
+    }
   };
 
-  const toggleTask = (cardId, taskId) => {
-    setCardList((prev) =>
-      prev.map((card) =>
+  const toggleTask = async (cardId, taskId, currentStatus) => {
+    try {
+      await api.put(`/cards/${cardId}/tasks/${taskId}`, {
+        isChecked: !currentStatus,
+      });
+      const updatedList = cardList.map((card) =>
         card.id === cardId
           ? {
               ...card,
               tasks: card.tasks.map((task) =>
-                task.id === taskId
+                task._id === taskId
                   ? { ...task, isChecked: !task.isChecked }
                   : task
               ),
             }
           : card
-      )
-    );
+      );
+      setCardList(updatedList);
+    } catch (err) {
+      console.error("Erro ao alternar tarefa:", err);
+    }
   };
 
-  const updateTaskText = (cardId, taskId, newText) => {
-    setCardList((prev) =>
-      prev.map((card) =>
+  const updateTaskText = async (cardId, taskId, newText) => {
+    try {
+      await api.put(`/cards/${cardId}/tasks/${taskId}`, { text: newText });
+      const updatedList = cardList.map((card) =>
         card.id === cardId
           ? {
               ...card,
               tasks: card.tasks.map((task) =>
-                task.id === taskId ? { ...task, text: newText } : task
+                task._id === taskId ? { ...task, text: newText } : task
               ),
             }
           : card
-      )
-    );
+      );
+      setCardList(updatedList);
+    } catch (err) {
+      console.error("Erro ao atualizar texto da tarefa:", err);
+    }
   };
 
-  // --- Lógica do dnd-kit ---
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
   );
 
-  function handleDragEnd(event) {
+  async function handleDragEnd(event) {
     const { active, over } = event;
     if (over && active.id !== over.id) {
-      setCardList((items) => {
-        const oldIndex = items.findIndex((item) => item.id === active.id);
-        const newIndex = items.findIndex((item) => item.id === over.id);
-        return arrayMove(items, oldIndex, newIndex);
-      });
+      const oldIndex = cardList.findIndex((item) => item.id === active.id);
+      const newIndex = cardList.findIndex((item) => item.id === over.id);
+      const reorderedList = arrayMove(cardList, oldIndex, newIndex);
+      setCardList(reorderedList);
     }
+  }
+
+  if (loading) {
+    return <div className="loading-container">Carregando...</div>;
   }
 
   return (
@@ -144,20 +190,12 @@ function BoardPage({ onLogout }) {
       onDragEnd={handleDragEnd}
     >
       <div className="App">
-        {/* Passamos a função de adicionar card e a de logout para a Navbar */}
         <Navbar onAddCardClick={addCard} onLogout={onLogout} />
         <main className="card-container">
           <SortableContext items={cardList} strategy={rectSortingStrategy}>
             <AnimatePresence>
               {cardList.map((card) => (
-                <motion.div
-                  key={card.id}
-                  layout
-                  initial={{ opacity: 0, scale: 0.8, y: 50 }}
-                  animate={{ opacity: 1, scale: 1, y: 0 }}
-                  exit={{ opacity: 0, scale: 0.8, x: -100 }}
-                  transition={{ type: "spring", stiffness: 200, damping: 25 }}
-                >
+                <motion.div key={card.id} layout /* ... */>
                   <Card
                     id={card.id}
                     title={card.title}

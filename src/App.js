@@ -14,17 +14,17 @@ import RegisterPage from "./pages/RegisterPage";
 import BoardPage from "./pages/BoardPage";
 
 function App() {
-  // ATENÇÃO: Para desenvolvimento, 'true' permite acesso direto à BoardPage.
-  // Mude para 'false' para testar o fluxo de login completo ou para produção.
-  const [isAuthenticated, setIsAuthenticated] = useState(true);
+  
+  const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem("token"));
 
-  // Função que será passada para a LoginPage para atualizar o estado após o login
+  
   const handleLoginSuccess = () => {
     setIsAuthenticated(true);
   };
 
-  // Função que será passada para a BoardPage (e depois para a Navbar) para fazer logout
+
   const handleLogout = () => {
+    localStorage.removeItem("token")
     setIsAuthenticated(false);
   };
 
