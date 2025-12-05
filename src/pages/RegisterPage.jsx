@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import api from "../services/api";
 
-
 import "../../src/App.css";
 
 function RegisterPage() {
@@ -50,13 +49,13 @@ function RegisterPage() {
           name="password"
           value={password}
           onChange={onChange}
-           minLength="6"
+          minLength="6"
           required
         />
         <button type="submit">Registrar</button>
       </form>
-      {error && <p className="">{error}</p>}
-      {success && <p className="">{success}</p>}
+      {error && <p>{error}</p>}
+      {success && <p>{success}</p>}
       <p className="register-question">
         Já tem uma conta?{" "}
         <Link className="login-icon" to="/login">
